@@ -48,9 +48,9 @@ def main():
         lst_folder_items = os.listdir(path_to_save)
         highest_number = 0
         for item in lst_folder_items:
-            act_number = item[:item.find("-")]
-            if int(act_number) > int(highest_number):
-                highest_number = int(act_number)
+            act_number = int(item[:item.find("-")])
+            if act_number > highest_number:
+                highest_number = act_number
         download_files(highest_number, (highest_number + distance_new))
 
 
