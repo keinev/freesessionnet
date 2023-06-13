@@ -5,6 +5,11 @@ All official documents from the city of Dessau-Roßlau are published on https://
 
 The aim of this project is to create a comprehensive searchable, analysable database of all public data.
 
+The project consits out of 3 main components:
+- Downloader: Repsonsible for downloading all the files from sessionnet and saving them
+- Parser: Responsible for consuming the downloaded files, parsing them and saving them into a database
+- Frontend: A user interface to the database that is accessible through a webbrowser.
+
 
 # German: freeSessionNet ✊
 
