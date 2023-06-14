@@ -12,7 +12,7 @@ canz = "12"
 time_pattern = r"\d{2}:\d{2}"
 down_number_pattern = r'id=(\d+)'
 
-csv_filename = "base.csv"
+json_filename = "base.json"
 down_base_addr = "https://sessionnet.dessau.de/bi/"
 download_path = "RIS2_PDF/"
 
@@ -61,6 +61,18 @@ def get_list_with_meta(start_year, month_ahead, c_month):
                 if check_list_pattern([event_date, other_meta, down_elements]):
                     full_list.append([event_date, other_meta, down_elements])
         return full_list
+
+
+def download_file(file_part, file_number, version):
+    # download file and save in pattern filenumber_version-fullfilename
+    full_address = down_base_addr + file_part
+    response = requests.get(full_address)
+    if response.status_code == 200:
+        filename = response.headers.get('content-disposition')
+        filename = str(file_number) + "_" + version + "-" + filename[filename.find('"') + 1:-1]
+        open(download_path + filename, 'wb').write(response.content)
+        return True
+    return False
 
 
 def check_list_pattern(list_entry):
@@ -118,20 +130,31 @@ def generate_json(list_to_json):
 
 
 def main():
+    json_exist = False
+    files_exist = False
     # IDEA
-    # if no entrys in dir = start with 2006 or something, to date today year
-    #              split in month and start a download-thread for each month?
-    #              write downfile names with meta in csv cause i dont know the database
-    # else get last known date of downfile in csv, -1 month, ignore files that already exist,
-    #      download the missing
-    if get_known_numbers():
-        down_meta = get_list_with_meta(cjahr, canz, cmonat)
-        for item in down_meta:
-            for down_file in item[2]:
-                only_number = re.search(down_number_pattern, down_file)
-                only_number = only_number.group(1)
-                if only_number in all_known_numbers:
-                    print("known:", only_number)
+    # check if files in dir (but ignore base.json)
+    if len(os.listdir(download_path)) != 0:
+
+    # - if not start crawl since 2006
+    # - if yes check last know date and crawl from last known date - 1 month
+    # check if base.json exists
+    # - check if number of files (-1) eq. number of files in json
+    # -- if not iterate over all files and write missing to json
+
+    # QUESTIONS
+    # if we collect all docs by bruteforce (old method) do we get docs not listed?
+
+
+    # OLD
+    #if get_known_numbers():
+    #    down_meta = get_list_with_meta(cjahr, canz, cmonat)
+    #    for item in down_meta:
+    #        for down_file in item[2]:
+    #            only_number = re.search(down_number_pattern, down_file)
+    #            only_number = only_number.group(1)
+    #            if only_number in all_known_numbers:
+    #                print("known:", only_number)
 
 
 if __name__ == "__main__":
