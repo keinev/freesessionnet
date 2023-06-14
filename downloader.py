@@ -1,8 +1,9 @@
 from bs4 import BeautifulSoup
 import requests
 import re
-#import cvs # write filenames and meta in CSV?
+import json
 import os
+from datetime import datetime
 
 cjahr = "2020"
 cmonat = "1"
@@ -80,7 +81,7 @@ def get_known_numbers():
         lst_folder_items = os.listdir(download_path)
         if len(lst_folder_items) != 0:
             for list_item in lst_folder_items:
-                if list_item[-4:] == ".pdf":
+                if list_item[-5:] != ".json":
                     all_known_numbers.append(list_item[:list_item.find("-")])
         return True
     except FileNotFoundError:
@@ -88,8 +89,32 @@ def get_known_numbers():
         return False
 
 
-#def write_csv(list_with_meta):
- #   with open(csv_filename)
+def generate_json(list_to_json):
+    files_in_data = []
+    crawl_date = str(datetime.now())
+
+    if list_to_json[2]:
+        for down_file in list_to_json[2]:
+            file_info = {}
+            match_id = re.search(down_number_pattern, down_file)
+            if match_id:
+                file_info["id"] = match_id.group(1)
+            file_info["link"] = down_file
+            file_info["name"] = "placeholder"
+            files_in_data.append(file_info)
+
+    json_data = {
+        "crawltime": crawl_date,
+        "meeting": {
+            "date": list_to_json[0],
+            "responsible": list_to_json[1][0],
+            "time": list_to_json[1][1],
+            "location": list_to_json[1][2]
+        },
+        "files": files_in_data
+    }
+    json_output = json.dumps(json_data, indent=4)
+    return json_output
 
 
 def main():
