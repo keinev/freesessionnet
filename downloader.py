@@ -102,12 +102,11 @@ def main():
     if get_known_numbers():
         down_meta = get_list_with_meta(cjahr, canz, cmonat)
         for item in down_meta:
-            if check_list_pattern(item):
-                for down_file in item[2]:
-                    only_number = re.search(down_number_pattern, down_file)
-                    only_number = only_number.group(1)
-                    if only_number in all_known_numbers:
-                        print("known:", only_number)
+            for down_file in item[2]:
+                only_number = re.search(down_number_pattern, down_file)
+                only_number = only_number.group(1)
+                if only_number in all_known_numbers:
+                    print("known:", only_number)
 
 
 if __name__ == "__main__":
