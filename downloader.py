@@ -24,7 +24,6 @@ all_known_numbers = []
 
 
 # https://sessionnet.dessau.de/bi/si0046.asp?__cjahr=2020&__canz=2&__cmonat=1
-
 def get_list_with_meta(start_year, month_ahead, c_month):
     address = f"https://sessionnet.dessau.de/bi/si0046.asp?__cjahr={start_year}&__canz={month_ahead}&__cmonat={c_month}"
     response = requests.get(address)
@@ -41,6 +40,7 @@ def get_list_with_meta(start_year, month_ahead, c_month):
             down_elements = []
             event_date = ""
             other_meta = []
+            link_to_follow = ""
 
             for record_data in table_record.find_all('td'):
                 class_attr = record_data.get('class', [])
@@ -83,9 +83,7 @@ def build_json(list_with_meta):
     update_json_with_meta(json_data, meeting_id, list_with_meta[3])
     update_json_with_sub_docs(json_data, meeting_id, list_with_meta[3])
 
-    json_output = json.dumps(json_data, indent=4)
-    print(json_output)
-    # write_json(json_output)
+    return (json_data)
 
 
 def extract_meeting_id(link):
@@ -276,10 +274,35 @@ def get_doc_hash(content):
     return md5_hash
 
 
+def check_init(check_file_path):
+    init_constuct = {"sessions": {}}
+    if os.path.isfile(check_file_path):
+        pass
+    else:
+        init_data = json.dumps(init_constuct)
+        with open(check_file_path, 'w') as file_writer:
+            file_writer.write(init_data)
+
+
+def check_write_file(session_to_write):
+    path_to_file = download_path + json_file
+    check_init(path_to_file)
+
+    with open(path_to_file, "r") as file:
+        existing_data = json.load(file)
+
+    existing_data["sessions"].update(session_to_write)
+
+    with open(path_to_file, "w") as file:
+        json.dump(existing_data, file, indent=4)
+
+    print(list(session_to_write)[0])
+
+
 def main():
     first_data = get_list_with_meta(cjahr, canz, cmonat)
     for line in first_data:
-        build_json(line)
+        check_write_file(build_json(line))
 
 
 if __name__ == "__main__":
