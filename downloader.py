@@ -4,16 +4,17 @@ import re
 import json
 import os
 from datetime import datetime
-import hashlib
 
+#startyear
 cjahr = "2020"
+#startmonth of startyear
 cmonat = "1"
 # months ahead - more is possible but ofc slower
 canz = "2"
+
 time_pattern = r'\d{2}:\d{2}'
 down_number_pattern = r'id=(\d+)'
 meet_number_pattern = r'inr=(\d+)'
-sub_doc_pattern = ""
 
 down_base_addr = "https://sessionnet.dessau.de/bi/"
 download_path = "RIS2_PDF/"
@@ -131,10 +132,10 @@ def build_file_info(down_file, list_with_meta, crawl_date):
     file_info.update({
         "link": list_with_meta[3],
         "crawltime": str(crawl_date),
-        "name": "placeholder",
-        "hash": "placeholder",
+        "name": "",
+        "hash": "",
         "doc_type": "main",
-        "version": "1"
+        "version": ""
     })
     return file_info
 
@@ -267,11 +268,6 @@ def get_sub_docs(session_link):
                     [sub_doc_label, sub_doc_meta_name, sub_doc_decision, sub_doc_decision_votes, sub_docs_links])
 
     return sub_docs_with_meta
-
-
-def get_doc_hash(content):
-    md5_hash = hashlib.md5(content).hexdigest()
-    return md5_hash
 
 
 def check_init(check_file_path):
