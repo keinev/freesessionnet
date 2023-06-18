@@ -1,6 +1,6 @@
 import pandas as pd
 
-download_path = ""
+download_path = "RIS2_PDF/"
 json_file = "#base.json"
 path_to_file = download_path + json_file
 
