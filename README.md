@@ -21,7 +21,7 @@ Ziel dieses Projekts ist es, eine umfassende durchsuchbare, analysierbare Datenb
 
 
 ## Downloader - How i think it should work
-- instead of just try all document number, iterate over all main and sublinks, save Meta and Links in a JSON. This JSON acts like a database.
+- instead of just try all document number, we should itterate over all main and sublinks, save Meta and Links in a JSON. This JSON acts like a database.
 - then downlaod all files by theese links, create a MD5 Hash of the content so you are able to check later is the document content changed and download it again to compare whats changed.
 - implent some checks for missing data
 
