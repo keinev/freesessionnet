@@ -49,7 +49,6 @@ def get_list_with_meta(start_year, month_ahead, c_month):
 
                 if 'sidat_tag' in class_attr:
                     if record_data.a is not None:
-                        # event_date = record_data.a.span.next_sibling
                         date_match = re.match(date_pattern, str(record_data.a.span.next_sibling))
                         if date_match:
                             event_date = record_data.a.span.next_sibling
@@ -87,11 +86,23 @@ def build_json(list_with_meta):
         return None
 
     json_data = initialize_json_data(meeting_id, list_with_meta)
+    # get persons is a request who must be
     update_json_with_persons(json_data, meeting_id, list_with_meta[3])
-    update_json_with_meta(json_data, meeting_id, list_with_meta[3])
-    update_json_with_sub_docs(json_data, meeting_id, list_with_meta[3])
+
+    html_meta_subd = get_html_for_meta_and_subdocs(list_with_meta[3])
+    update_json_with_meta(json_data, meeting_id, html_meta_subd)
+    update_json_with_sub_docs(json_data, meeting_id, html_meta_subd)
 
     return json_data
+
+
+def get_html_for_meta_and_subdocs(link):
+    new_addr = down_base_addr + link
+    response = requests.get(new_addr)
+
+    if response.status_code == 200:
+        html_text = response.text
+    return html_text
 
 
 def extract_meeting_id(link):
@@ -144,6 +155,7 @@ def build_files_in_data(list_with_meta):
     for down_file in list_with_meta[2]:
         file_info = build_file_info(down_file, list_with_meta, crawl_date)
         files_in_data.append(file_info)
+    print(files_in_data)
     return files_in_data
 
 
@@ -153,7 +165,7 @@ def build_file_info(down_file, list_with_meta, crawl_date):
     if match_id:
         file_info["id"] = match_id.group(1)
     file_info.update({
-        "link": list_with_meta[3],
+        "link": down_file,
         "crawltime": str(crawl_date),
         "name": "",
         "hash": "",
@@ -164,7 +176,6 @@ def build_file_info(down_file, list_with_meta, crawl_date):
 
 
 def update_json_with_persons(json_data, meeting_id, link):
-    #print(meeting_id, link)
     for person in get_person_data(link):
         if len(person) >= 3:
             new_person = {
@@ -179,16 +190,67 @@ def update_json_with_persons(json_data, meeting_id, link):
             print(f'error with {person}')
 
 
-def update_json_with_meta(json_data, meeting_id, link):
-    new_meta = get_update_meta(link)
-    if len(new_meta) != 0:
-        json_data[meeting_id]["meeting"]["name"] = new_meta[0]
+def update_json_with_meta(json_data, meeting_id, html_text):
+    new_meta_data = []
+
+    soup = BeautifulSoup(html_text, 'html.parser')
+    new_meta_data = (soup.find("div", {"class": "siname"}).string)
+
+    if len(new_meta_data) != 0:
+        json_data[meeting_id]["meeting"]["name"] = new_meta_data
 
 
-def update_json_with_sub_docs(json_data, meeting_id, link):
-    sub_docs_wth_meta = get_sub_docs(link)
-    if len(sub_docs_wth_meta) != 0:
-        for each_sub in sub_docs_wth_meta:
+def update_json_with_sub_docs(json_data, meeting_id, html_text):
+    sub_docs_with_meta = []
+
+    soup = BeautifulSoup(html_text, 'html.parser')
+    table_body = soup.find('tbody')
+    if table_body is not None:
+        for table_record in table_body.find_all('tr'):
+            toxx_in_record = table_record.find('td', attrs={'class': 'toxx'})
+            trenn_in_record = table_record.find('td', attrs={'class': 'totrenn'})
+
+            if not toxx_in_record and not trenn_in_record:
+                sub_doc_label = ""
+                sub_doc_meta_name = ""
+                sub_docs_links = []
+                sub_doc_decision = ""
+                sub_doc_decision_votes = ""
+
+                sub_doc_meta = table_record.find('td', attrs={'class': 'tobetr'})
+                sub_doc_label_element = table_record.find('td', attrs={'class': 'tovo'})
+
+                if sub_doc_label_element is not None:
+                    sub_doc_label = sub_doc_label_element.text.strip()
+
+                sub_docs = table_record.find('td', attrs={'class': 'sidocs'})
+                sub_docs_links = list(
+                    set([a_tag['href'] for a_tag in sub_docs.find_all('a', attrs={'href': True})]))
+
+                sub_doc_meta_name_element = sub_doc_meta.find('div',
+                                                              attrs={'class': 'smc-card-header-title-simple'})
+
+                if sub_doc_meta_name_element is not None:
+                    sub_doc_meta_name = sub_doc_meta_name_element.text.strip()
+
+                sub_doc_decision_element = sub_doc_meta.find('p',
+                                                             attrs={'class': 'smc_field_smcdv0_box2_beschluss'})
+
+                if sub_doc_decision_element is not None:
+                    sub_doc_decision = sub_doc_decision_element.text.replace("Beschluss: ", "")
+
+                sub_doc_decision_votes_element = sub_doc_meta.find('p',
+                                                                   attrs={
+                                                                       'class': 'smc_field_smcdv0_box2_abstimmung'})
+
+                if sub_doc_decision_votes_element is not None:
+                    sub_doc_decision_votes = sub_doc_decision_votes_element.text.replace("Abstimmung: ", "")
+
+                sub_docs_with_meta.append(
+                    [sub_doc_label, sub_doc_meta_name, sub_doc_decision, sub_doc_decision_votes, sub_docs_links])
+
+    if len(sub_docs_with_meta) != 0:
+        for each_sub in sub_docs_with_meta:
             sub_item = build_sub_item(each_sub)
             json_data[meeting_id]["sub_files"].append(sub_item)
 
@@ -249,75 +311,6 @@ def get_person_data(session_link):
     return all_member_data
 
 
-def get_update_meta(session_link):
-    new_meta_data = []
-    response = requests.get(down_base_addr + session_link)
-
-    if response.status_code == 200:
-        html_text = response.text
-        soup = BeautifulSoup(html_text, 'html.parser')
-        new_meta_data.append(soup.find("div", {"class": "siname"}).string)
-
-    return new_meta_data
-
-
-def get_sub_docs(session_link):
-    sub_docs_with_meta = []
-
-    new_addr = down_base_addr + session_link
-    response = requests.get(new_addr)
-
-    if response.status_code == 200:
-        html_text = response.text
-        soup = BeautifulSoup(html_text, 'html.parser')
-        table_body = soup.find('tbody')
-        if table_body is not None:
-            for table_record in table_body.find_all('tr'):
-                toxx_in_record = table_record.find('td', attrs={'class': 'toxx'})
-                trenn_in_record = table_record.find('td', attrs={'class': 'totrenn'})
-
-                if not toxx_in_record and not trenn_in_record:
-                    sub_doc_label = ""
-                    sub_doc_meta_name = ""
-                    sub_docs_links = []
-                    sub_doc_decision = ""
-                    sub_doc_decision_votes = ""
-
-                    sub_doc_meta = table_record.find('td', attrs={'class': 'tobetr'})
-                    sub_doc_label_element = table_record.find('td', attrs={'class': 'tovo'})
-
-                    if sub_doc_label_element is not None:
-                        sub_doc_label = sub_doc_label_element.text.strip()
-
-                    sub_docs = table_record.find('td', attrs={'class': 'sidocs'})
-                    sub_docs_links = list(
-                        set([a_tag['href'] for a_tag in sub_docs.find_all('a', attrs={'href': True})]))
-
-                    sub_doc_meta_name_element = sub_doc_meta.find('div',
-                                                                  attrs={'class': 'smc-card-header-title-simple'})
-
-                    if sub_doc_meta_name_element is not None:
-                        sub_doc_meta_name = sub_doc_meta_name_element.text.strip()
-
-                    sub_doc_decision_element = sub_doc_meta.find('p',
-                                                                 attrs={'class': 'smc_field_smcdv0_box2_beschluss'})
-
-                    if sub_doc_decision_element is not None:
-                        sub_doc_decision = sub_doc_decision_element.text.replace("Beschluss: ", "")
-
-                    sub_doc_decision_votes_element = sub_doc_meta.find('p',
-                                                                       attrs={
-                                                                           'class': 'smc_field_smcdv0_box2_abstimmung'})
-
-                    if sub_doc_decision_votes_element is not None:
-                        sub_doc_decision_votes = sub_doc_decision_votes_element.text.replace("Abstimmung: ", "")
-
-                    sub_docs_with_meta.append(
-                        [sub_doc_label, sub_doc_meta_name, sub_doc_decision, sub_doc_decision_votes, sub_docs_links])
-
-    return sub_docs_with_meta
-
-
 def check_init(check_file_path):
     init_constuct = {"sessions": {}}
     if os.path.isfile(check_file_path):
@@ -328,7 +321,7 @@ def check_init(check_file_path):
             file_writer.write(init_data)
 
 
-def check_write_file(session_to_write):
+def write_file(session_to_write):
     path_to_file = download_path + json_file
 
     with open(path_to_file, "r") as file:
@@ -345,15 +338,15 @@ def main():
     path_to_file = download_path + json_file
     check_init(path_to_file)
 
-#   with open(path_to_file, "r") as file:
-#       existing_data = json.load(file)
+    #   with open(path_to_file, "r") as file:
+    #       existing_data = json.load(file)
 
     for year in range(2007, int(datetime.today().strftime('%Y')) + 1):
         first_data = get_list_with_meta(year, canz, cmonat)
         for line in first_data:
             # just for ignore already loaded once
             # if line[3].replace("si0057.asp?__ksinr=", "") not in existing_data["sessions"]:
-            check_write_file(build_json(line))
+            write_file(build_json(line))
             # else:
             #    print(f'skipped {line[0]}')
 
