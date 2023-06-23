@@ -97,6 +97,8 @@ def build_json(list_with_meta):
 
 
 def get_html_for_meta_and_subdocs(link):
+    html_text = ""
+
     new_addr = down_base_addr + link
     response = requests.get(new_addr)
 
@@ -143,7 +145,7 @@ def initialize_json_data(meeting_id, list_with_meta):
             },
             "persons": [],
             "main_files": files_in_data,
-            "sub_files": []
+            "sub_sessions": []
         }
     }
     return json_data
@@ -155,7 +157,6 @@ def build_files_in_data(list_with_meta):
     for down_file in list_with_meta[2]:
         file_info = build_file_info(down_file, list_with_meta, crawl_date)
         files_in_data.append(file_info)
-    print(files_in_data)
     return files_in_data
 
 
@@ -166,7 +167,7 @@ def build_file_info(down_file, list_with_meta, crawl_date):
         file_info["id"] = match_id.group(1)
     file_info.update({
         "link": down_file,
-        "crawltime": str(crawl_date),
+        "downloadtime": "",
         "name": "",
         "hash": "",
         "doc_type": "main",
@@ -252,20 +253,45 @@ def update_json_with_sub_docs(json_data, meeting_id, html_text):
     if len(sub_docs_with_meta) != 0:
         for each_sub in sub_docs_with_meta:
             sub_item = build_sub_item(each_sub)
-            json_data[meeting_id]["sub_files"].append(sub_item)
+            json_data[meeting_id]["sub_sessions"].append(sub_item)
 
 
 def build_sub_item(each_sub):
     all_votes = build_all_votes(each_sub[3])
+    subfiles_with_meta = build_sub_file_meta(each_sub[4])
+
     sub_item = {
         "id": each_sub[0],
         "desc": each_sub[1],
         "voted_status": each_sub[2],
         "votes": all_votes,
         "requester": each_sub[0].split('/')[-1],
-        "files": each_sub[4]
+        "sub_files": subfiles_with_meta
     }
     return sub_item
+
+
+def build_sub_file_meta(all_subfiles):
+    subfiles_with_meta = []
+
+    for sub_file in all_subfiles:
+        subfile_meta = {}
+        match_id = re.search(down_number_pattern, sub_file)
+        if match_id:
+            sub_id = match_id.group(1)
+        else:
+            sub_id = ""
+        subfile_meta = {
+            "id": sub_id,
+            "link": sub_file,
+            "downloadtime": "",
+            "name": "",
+            "hash": "",
+            "doc_type": "sub",
+            "version": ""
+        }
+        subfiles_with_meta.append(subfile_meta)
+    return subfiles_with_meta
 
 
 def build_all_votes(vote_string):
