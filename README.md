@@ -28,9 +28,9 @@ Ziel dieses Projekts ist es, eine umfassende durchsuchbare, analysierbare Datenb
 parts for the downloader will be
 - the initial JSON builder
 - the downloader
--- update names, hash and last_download_time
--- ofc download and name the files like FILEID-FILENAME_VERION.FILETYPE
+  - update names, hash and last_download_time
+  - ofc download and name the files like FILEID-FILENAME_VERION.FILETYPE
 - the update_checker
--- update the JSON file with new content
+  - update the JSON file with new content
 
 --- by SodaYodB
