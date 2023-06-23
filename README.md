@@ -20,7 +20,7 @@ Alle offiziellen Dokumente der Stadt Dessau-Roßlau werden auf https://sessionne
 Ziel dieses Projekts ist es, eine umfassende durchsuchbare, analysierbare Datenbank aller öffentlichen Daten zu erstellen.
 
 
-## downloader - How i think it should work
+## downloader - how i think it should work
 - instead of just try all document number, we should itterate over all main and sublinks, save meta and links in a JSON. This JSON acts like a database.
 - then download all files by theese links, create a MD5 hash of the content so you are able to check later is the document content changed and download it again to compare whats changed.
 - implent some checks for missing data
