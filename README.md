@@ -29,7 +29,7 @@ parts for the downloader will be
 - the initial JSON builder
 - the downloader
   - update names, hash and downloadtime
-  - ofc download and name the files like FILEID-FILENAME-VERSION.FILETYPE
+  - ofc download and name the files like FILEID-VERSION-FILENAMEwithFILETYPE
   - download all documents from newest known to now -1 month in JSON once per day or maybe something based on last downloadtime
 - the update_checker
   - update the JSON file with new content for example once per day
