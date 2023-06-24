@@ -36,7 +36,7 @@ for testfile in testfiles:
         filename = response.headers.get('content-disposition')
         filename = file_number + "-" + str(test_version) + "-" + filename[filename.find('"') + 1:-1]
     print(filename)
-    h = hashlib.new('sha256')
+    h = hashlib.new('md5')
     h.update(response.content)
     print(h.hexdigest())
     print("")
