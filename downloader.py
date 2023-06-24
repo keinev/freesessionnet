@@ -16,9 +16,9 @@ def download_files(start, end):
         response = requests.get(address)
         if response.status_code == 200:
             filename = response.headers.get('content-disposition')
-            filename = str(i) + filename[filename.find('"') + 1:-11]
+            filename = str(i) + filename[filename.find('"') + 1:-1]
             with lock:
-                open(path + filename, 'w').write(response.content)
+                open(path + filename, 'wb').write(response.content)
         else:
             print(response.status_code)
 
