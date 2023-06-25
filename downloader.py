@@ -153,14 +153,13 @@ def initialize_json_data(meeting_id, list_with_meta):
 
 def build_files_in_data(list_with_meta):
     files_in_data = []
-    crawl_date = str(datetime.now())
     for down_file in list_with_meta[2]:
-        file_info = build_file_info(down_file, list_with_meta, crawl_date)
+        file_info = build_file_info(down_file)
         files_in_data.append(file_info)
     return files_in_data
 
 
-def build_file_info(down_file, list_with_meta, crawl_date):
+def build_file_info(down_file):
     file_info = {}
     match_id = re.search(down_number_pattern, down_file)
     if match_id:
@@ -195,7 +194,7 @@ def update_json_with_meta(json_data, meeting_id, html_text):
     new_meta_data = []
 
     soup = BeautifulSoup(html_text, 'html.parser')
-    new_meta_data = (soup.find("div", {"class": "siname"}).string)
+    new_meta_data = soup.find("div", {"class": "siname"}).string
 
     if len(new_meta_data) != 0:
         json_data[meeting_id]["meeting"]["name"] = new_meta_data
