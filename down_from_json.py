@@ -11,6 +11,7 @@ json_file = "#dessau_base.json"
 
 down_number_pattern = r'id=(\d+)'
 
+path_to_file = download_path + json_file
 with open(path_to_file, "r") as file:
     existing_data = json.load(file)
 
