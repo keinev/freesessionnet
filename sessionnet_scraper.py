@@ -8,13 +8,16 @@ from datetime import datetime
 
 
 class SessionnetCrawler:
+    class FoundException(Exception):
+        pass
+
     time_pattern = r'\d{2}:\d{2}'
     down_number_pattern = r'id=(\d+)'
     meet_number_pattern = r'inr=(\d+)'
     date_pattern = r'^(\d{2})\.(\d{2})\.(\d{4})$'
     init_constuct = {"sessions": {}}
 
-    def __init__(self, file_path, city_name, base_address, start_year, start_month=1, month_ahead=12, skip_known=True):
+    def __init__(self, file_path, city_name, base_address, start_year, start_month=1, month_ahead=12, skip_known=False):
         self.file_path = file_path
         self.city_name = city_name
         self.base_address = base_address.replace("info.asp", "")
@@ -25,6 +28,8 @@ class SessionnetCrawler:
 
         self.json_file = f"#{self.city_name.lower()}_base.json"
         self.path_to_file = self.file_path + self.json_file
+
+        self.existing_data = ""
 
         self.check_init()
 
@@ -39,16 +44,14 @@ class SessionnetCrawler:
                 file_writer.write(init_data)
 
     def start_crawl(self):
-        existing_data = []
-        if self.skip_known:
-            with open(self.path_to_file, "r") as file:
-                existing_data = json.load(file)
+        with open(self.path_to_file, "r") as file:
+            self.existing_data = json.load(file)
 
         for year in range(self.start_year, int(datetime.today().strftime('%Y')) + 1):
             first_data = self.get_list_with_meta(year, self.month_ahead, self.start_month)
             for line in first_data:
                 if self.skip_known:
-                    if line[3].replace("si0057.asp?__ksinr=", "") not in existing_data["sessions"]:
+                    if line[3].replace("si0057.asp?__ksinr=", "") not in self.existing_data["sessions"]:
                         self.write_json_file(self.build_json(line))
                     else:
                         print(f'skipped {line[0]}')
@@ -113,15 +116,16 @@ class SessionnetCrawler:
 
     def build_file_info(self, down_file):
         file_info = {}
-        match_id = re.search(self.down_number_pattern, down_file)
-        if match_id:
-            file_info["id"] = match_id.group(1)
+        doc_type = "main"
+        main_id = re.search(self.down_number_pattern, down_file).group(1)
+
         file_info.update({
+            "id": main_id,
             "link": down_file,
             "download_time": "",
             "name": "",
             "hash": "",
-            "doc_type": "main",
+            "doc_type": doc_type,
             "version": ""
         })
         file_info = self.load_edit(file_info)
@@ -173,13 +177,10 @@ class SessionnetCrawler:
         return html_text
 
     def write_json_file(self, session_to_write):
-        with open(self.path_to_file, "r") as file:
-            existing_data = json.load(file)
-
-        existing_data["sessions"].update(session_to_write)
+        self.existing_data["sessions"].update(session_to_write)
 
         with open(self.path_to_file, "w") as file:
-            json.dump(existing_data, file, indent=4)
+            json.dump(self.existing_data, file, indent=4)
 
     def get_list_with_meta(self, start_year, month_ahead, c_month):
         address = f"{self.base_address}si0046.asp?__cjahr={start_year}&__canz={month_ahead}&__cmonat={c_month}"
@@ -312,20 +313,18 @@ class SessionnetCrawler:
 
     def build_sub_file_meta(self, all_subfiles):
         subfiles_with_meta = []
+        doc_type = "sub"
 
         for sub_file in all_subfiles:
-            match_id = re.search(self.down_number_pattern, sub_file)
-            if match_id:
-                sub_id = match_id.group(1)
-            else:
-                sub_id = ""
+            sub_id = re.search(self.down_number_pattern, sub_file).group(1)
+
             subfile_meta = {
                 "id": sub_id,
                 "link": sub_file,
                 "download_time": "",
                 "name": "",
                 "hash": "",
-                "doc_type": "sub",
+                "doc_type": doc_type,
                 "version": ""
             }
             subfile_meta = self.load_edit(subfile_meta)
@@ -353,8 +352,28 @@ class SessionnetCrawler:
         response = requests.get(address)
         if response.status_code == 200:
             got_response = True
-            file_hash = str(self.hash_filecontent(response.content))
-            if json_data["hash"] != file_hash:
+            new_file_hash = str(self.hash_filecontent(response.content))
+            file_hash = ""
+
+            try:
+                if json_data["doc_type"] == "main":
+                    for i, session in self.existing_data["sessions"].items():
+                        for i, elem in enumerate(session["main_files"]):
+                            if elem["id"] == json_data["id"]:
+                                file_hash = elem["hash"]
+                                raise self.FoundException
+
+                if json_data["doc_type"] == "sub":
+                    for i, session in self.existing_data["sessions"].items():
+                        for sub_session in session["sub_sessions"]:
+                            for i, elem in enumerate(sub_session["sub_files"]):
+                                if elem["id"] == json_data["id"]:
+                                    file_hash = elem["hash"]
+                                    raise self.FoundException
+            except self.FoundException:
+                pass
+
+            if new_file_hash != file_hash:
                 got_version = True
                 filename = response.headers.get('content-disposition')
                 file_number = re.search(self.down_number_pattern, json_data["link"]).group(1)
@@ -368,7 +387,7 @@ class SessionnetCrawler:
                 new_version = str(new_version)
 
                 json_data["name"] = fin_filename
-                json_data["hash"] = file_hash
+                json_data["hash"] = new_file_hash
                 json_data["version"] = new_version
                 json_data["download_time"] = down_time
 
@@ -377,4 +396,7 @@ class SessionnetCrawler:
                         f.write(response.content)
                 except Exception as e:
                     print(f"Error: unable to write to file. {e}")
+
+            else:
+                print("skipped", json_data["id"])
         return json_data  # got_response, got_version, json_data
