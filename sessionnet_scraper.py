@@ -12,7 +12,7 @@ class Sessionnet_Crawler:
     meet_number_pattern = r'inr=(\d+)'
     date_pattern = r'^(\d{2})\.(\d{2})\.(\d{4})$'
 
-    def __init__(self, file_path, city_name, base_address, start_year, start_month, month_ahead, skip_known):
+    def __init__(self, file_path, city_name, base_address, start_year, start_month=1, month_ahead=12, skip_known=False):
         self.file_path = file_path
         self.city_name = city_name
         self.base_address = base_address.replace("info.asp", "")
@@ -113,7 +113,7 @@ class Sessionnet_Crawler:
             file_info["id"] = match_id.group(1)
         file_info.update({
             "link": down_file,
-            "downloadtime": "",
+            "download_time": "",
             "name": "",
             "hash": "",
             "doc_type": "main",
@@ -233,7 +233,7 @@ class Sessionnet_Crawler:
         soup = BeautifulSoup(html_text, 'html.parser')
         new_meta_data = soup.find("div", {"class": "siname"}).string
 
-        if len(new_meta_data) != 0:
+        if len(new_meta_data) > 0:
             json_data[meeting_id]["meeting"]["name"] = new_meta_data
 
     def update_json_with_sub_docs(self, json_data, meeting_id, html_text):
@@ -332,7 +332,3 @@ class Sessionnet_Crawler:
             all_votes["no"] = re.search(r'Nein:\s(\d+)', vote_string).group(1)
             all_votes["nonvote"] = re.search(r'Enthaltungen:\s(\d+)', vote_string).group(1)
         return all_votes
-
-
-crawler = Sessionnet_Crawler("RIS2_PDF/", "Dessau", "https://sessionnet.dessau.de/bi/info.asp", 2022, 1, 12, False)
-crawler.start_crawl()
