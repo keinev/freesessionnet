@@ -3,16 +3,18 @@ import requests
 import re
 import json
 import os
+import hashlib
 from datetime import datetime
 
 
-class Sessionnet_Crawler:
+class SessionnetCrawler:
     time_pattern = r'\d{2}:\d{2}'
     down_number_pattern = r'id=(\d+)'
     meet_number_pattern = r'inr=(\d+)'
     date_pattern = r'^(\d{2})\.(\d{2})\.(\d{4})$'
+    init_constuct = {"sessions": {}}
 
-    def __init__(self, file_path, city_name, base_address, start_year, start_month=1, month_ahead=12, skip_known=False):
+    def __init__(self, file_path, city_name, base_address, start_year, start_month=1, month_ahead=12, skip_known=True):
         self.file_path = file_path
         self.city_name = city_name
         self.base_address = base_address.replace("info.asp", "")
@@ -27,9 +29,12 @@ class Sessionnet_Crawler:
         self.check_init()
 
     def check_init(self):
-        init_constuct = {"sessions": {}}
+        folder_exists = os.path.exists(self.file_path)
+        if not folder_exists:
+            os.makedirs(self.file_path)
+
         if not os.path.isfile(self.path_to_file):
-            init_data = json.dumps(init_constuct)
+            init_data = json.dumps(self.init_constuct)
             with open(self.path_to_file, 'w') as file_writer:
                 file_writer.write(init_data)
 
@@ -119,6 +124,7 @@ class Sessionnet_Crawler:
             "doc_type": "main",
             "version": ""
         })
+        file_info = self.load_edit(file_info)
         return file_info
 
     def update_json_with_persons(self, json_data, meeting_id, link):
@@ -316,12 +322,13 @@ class Sessionnet_Crawler:
             subfile_meta = {
                 "id": sub_id,
                 "link": sub_file,
-                "downloadtime": "",
+                "download_time": "",
                 "name": "",
                 "hash": "",
                 "doc_type": "sub",
                 "version": ""
             }
+            subfile_meta = self.load_edit(subfile_meta)
             subfiles_with_meta.append(subfile_meta)
         return subfiles_with_meta
 
@@ -332,3 +339,42 @@ class Sessionnet_Crawler:
             all_votes["no"] = re.search(r'Nein:\s(\d+)', vote_string).group(1)
             all_votes["nonvote"] = re.search(r'Enthaltungen:\s(\d+)', vote_string).group(1)
         return all_votes
+
+    def hash_filecontent(self, file_content):
+        h = hashlib.new('md5')
+        h.update(file_content)
+        return h.hexdigest()
+
+    def load_edit(self, json_data):
+        got_response = False
+        got_version = False
+
+        address = self.base_address + json_data["link"]
+        response = requests.get(address)
+        if response.status_code == 200:
+            got_response = True
+            file_hash = str(self.hash_filecontent(response.content))
+            if json_data["hash"] != file_hash:
+                got_version = True
+                filename = response.headers.get('content-disposition')
+                file_number = re.search(self.down_number_pattern, json_data["link"]).group(1)
+
+                if json_data["version"] is not None and json_data["version"]:
+                    new_version = int(json_data["version"]) + 1
+                else:
+                    new_version = 1
+                fin_filename = str(file_number + "-" + str(new_version) + "-" + filename[filename.find('"') + 1:-1])
+                down_time = str(datetime.now())
+                new_version = str(new_version)
+
+                json_data["name"] = fin_filename
+                json_data["hash"] = file_hash
+                json_data["version"] = new_version
+                json_data["download_time"] = down_time
+
+                try:
+                    with open(self.file_path + fin_filename, 'wb') as f:
+                        f.write(response.content)
+                except Exception as e:
+                    print(f"Error: unable to write to file. {e}")
+        return json_data  # got_response, got_version, json_data
