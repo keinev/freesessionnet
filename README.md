@@ -18,20 +18,3 @@ Ein Datenexplorer für das Sessionnet-Portal von Dessau-Roßlau.
 Alle offiziellen Dokumente der Stadt Dessau-Roßlau werden auf https://sessionnet.dessau.de/ veröffentlicht, das im Grunde genommen unübersichtlich ist. Es handelt sich einfach um eine Ansammlung von verschiedenen binären Formaten, die für die breite Öffentlichkeit nicht durchsuchbar oder lesbar zugänglich sind.
 
 Ziel dieses Projekts ist es, eine umfassende durchsuchbare, analysierbare Datenbank aller öffentlichen Daten zu erstellen.
-
-
-## downloader - how i think it should work
-- instead of just try all document number, we should itterate over all main and sublinks, save meta and links in a JSON. This JSON acts like a database.
-- then download all files by theese links, create a MD5 hash of the content so you are able to check later is the document content changed and download it again to compare whats changed.
-- implent some checks for missing data
-
-parts for the downloader will be
-- the initial JSON builder
-- the downloader
-  - update names, hash and downloadtime
-  - ofc download and name the files like FILEID-VERSION-FILENAMEwithFILETYPE
-  - download all documents from newest known to now -1 month in JSON once per day or maybe something based on last downloadtime
-- the update_checker
-  - update the JSON file with new content for example once per day
-
---- by SodaYodB
