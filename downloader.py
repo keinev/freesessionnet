@@ -31,10 +31,10 @@ def check_update_months(folder_path, targets_name, base_address, months_back):
 
 
 def wait_until_next_execution(hour):
-    current_time = datetime.datetime.now()
+    current_time = datetime.now()
     next_execution_time = current_time.replace(hour=hour, minute=0, second=0)
     if current_time >= next_execution_time:
-        next_execution_time += datetime.timedelta(days=1)
+        next_execution_time += timedelta(days=1)
     wait_time = (next_execution_time - current_time).total_seconds()
     time.sleep(wait_time)
 
