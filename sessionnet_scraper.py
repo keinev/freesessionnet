@@ -336,9 +336,23 @@ class SessionnetCrawler:
     def build_all_votes(self, vote_string):
         all_votes = {}
         if len(vote_string) != 0:
-            all_votes["yes"] = re.search(r'Ja:\s(\d+)', vote_string).group(1)
-            all_votes["no"] = re.search(r'Nein:\s(\d+)', vote_string).group(1)
-            all_votes["nonvote"] = re.search(r'Enthaltungen:\s(\d+)', vote_string).group(1)
+            try:
+                all_votes["yes"] = re.search(r'Ja:\s(\d+)', vote_string).group(1)
+            except Exception:
+                all_votes["yes"] = ""
+            try:
+                all_votes["no"] = re.search(r'Nein:\s(\d+)', vote_string).group(1)
+            except Exception:
+                all_votes["no"] = ""
+            try:
+                all_votes["nonvote"] = re.search(r'Enthaltungen:\s(\d+)', vote_string).group(1)
+            except Exception:
+                all_votes["nonvote"] = ""
+            try:
+                all_votes["biased"] = re.search(r'Befangen:\s(\d+)', vote_string).group(1)
+            except Exception:
+                all_votes["biased"] = ""
+
         return all_votes
 
     def hash_filecontent(self, file_content):
