@@ -16,6 +16,8 @@ class SessionnetCrawler:
     meet_number_pattern = r'inr=(\d+)'
     date_pattern = r'^(\d{2})\.(\d{2})\.(\d{4})$'
     init_constuct = {"sessions": {}}
+    skipped_total = 0
+    new_total = 0
 
     def __init__(self, file_path, city_name, base_address, start_year, start_month=1, month_ahead=12, skip_known=False):
         self.file_path = file_path
@@ -44,6 +46,8 @@ class SessionnetCrawler:
                 file_writer.write(init_data)
 
     def start_crawl(self):
+        self.skipped_total = 0
+        self.new_total = 0
         with open(self.path_to_file, "r") as file:
             self.existing_data = json.load(file)
 
@@ -56,6 +60,7 @@ class SessionnetCrawler:
                     print(f'skipped {line[0]}')
             else:
                 self.write_json_file(self.build_json(line))
+        return self.skipped_total, self.new_total
 
     def build_json(self, list_with_meta):
         meeting_id = re.search(self.meet_number_pattern, list_with_meta[3]).group(1)
@@ -401,6 +406,7 @@ class SessionnetCrawler:
                     json_data["version"] = found_element["version"]
 
             if new_file_hash != json_data["hash"]:
+                self.new_total += 1
                 got_version = True
                 filename = response.headers.get('content-disposition')
                 file_number = re.search(self.down_number_pattern, json_data["link"]).group(1)
@@ -425,5 +431,5 @@ class SessionnetCrawler:
                     print(f"Error: unable to write to file. {e}")
 
             else:
-                print("skipped", json_data["id"])
+                self.skipped_total += 1
         return json_data
