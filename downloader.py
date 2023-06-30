@@ -1,40 +1,51 @@
-import requests
-import threading
+from sessionnet_scraper import SessionnetCrawler
+from datetime import datetime, timedelta
+import time
 
-path = "RIS2 PDF/"
-start_nbr = 250 # first is
-end_nbr = 310000
-batch_size = 10000
-num_threads = (end_nbr - start_nbr) // batch_size
 
-lock = threading.Lock()
+def get_all_files_and_meta(folder_path, targets_name, base_address, start_year):
+    for year in range(start_year, int(datetime.today().strftime('%Y')) + 1):
+        crawler = SessionnetCrawler(folder_path, targets_name, base_address, year, 1, 12)
+        crawler.start_crawl()
 
-def download_files(start, end):
-    for i in range(start, end):
-        address = "https://sessionnet.dessau.de/bi/getfile.asp?id=" + str(i) + "&type=do"
-        print(address)
-        response = requests.get(address)
-        if response.status_code == 200:
-            filename = response.headers.get('content-disposition')
-            filename = str(i) + filename[filename.find('"') + 1:-1]
-            with lock:
-                open(path + filename, 'wb').write(response.content)
-        else:
-            print(response.status_code)
+
+def check_update_months(folder_path, targets_name, base_address, months_back):
+    start_time = datetime.now()
+    print(f'Started at {start_time.strftime("%H:%M:%S")}')
+    start_date = datetime.now() - timedelta(days=30 * months_back)
+    start_year = int(start_date.strftime("%Y"))
+    start_month = int(start_date.strftime("%m"))
+    crawler = SessionnetCrawler(folder_path, targets_name, base_address, start_year, start_month, months_back)
+    crawler.start_crawl()
+    print(f'it took {datetime.now() - start_time} to crawl {months_back} month')
+    print(f'skipped: {crawler.skipped_total}, new: {crawler.new_total}')
+
+
+def wait_until_next_execution(hour):
+    current_time = datetime.now()
+    next_execution_time = current_time.replace(hour=hour, minute=0, second=0)
+    if current_time >= next_execution_time:
+        next_execution_time += timedelta(days=1)
+    wait_time = (next_execution_time - current_time).total_seconds()
+    print("wait to Start:", wait_time)
+    time.sleep(wait_time)
+
 
 def main():
-    threads = []
-    for i in range(num_threads):
-        start = start_nbr + (i * batch_size)
-        end = start + batch_size
-        thread = threading.Thread(target=download_files, args=(start, end))
-        print("thread ", start, end)
-        thread.start()
-        threads.append(thread)
+    folder_path = "RIS2_PDF/"
+    targets_name = "Dessau"
+    base_address = "https://sessionnet.dessau.de/bi/info.asp"
+    look_back_in_month = 3
+    scrape_hour = 4  # for 4AM
 
-    for thread in threads:
-        thread.join()
-    print("All threads have finished downloading.")
+    while True:
+        try:
+            wait_until_next_execution(scrape_hour)
+            check_update_months(folder_path, targets_name, base_address, look_back_in_month)
+            print("Done. Going to sleep.")
+        except Exception as e:
+            print(e)
+
 
 if __name__ == "__main__":
     main()
