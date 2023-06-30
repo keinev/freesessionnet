@@ -60,7 +60,6 @@ class SessionnetCrawler:
                     print(f'skipped {line[0]}')
             else:
                 self.write_json_file(self.build_json(line))
-        return self.skipped_total, self.new_total
 
     def build_json(self, list_with_meta):
         meeting_id = re.search(self.meet_number_pattern, list_with_meta[3]).group(1)
@@ -366,13 +365,10 @@ class SessionnetCrawler:
         return h.hexdigest()
 
     def load_edit(self, json_data):
-        got_response = False
-        got_version = False
 
         address = self.base_address + json_data["link"]
         response = requests.get(address)
         if response.status_code == 200:
-            got_response = True
             new_file_hash = str(self.hash_filecontent(response.content))
             found_element = []
 
@@ -407,7 +403,6 @@ class SessionnetCrawler:
 
             if new_file_hash != json_data["hash"]:
                 self.new_total += 1
-                got_version = True
                 filename = response.headers.get('content-disposition')
                 file_number = re.search(self.down_number_pattern, json_data["link"]).group(1)
 
