@@ -185,8 +185,6 @@ class SessionnetCrawler:
         with open(self.path_to_file, "w") as file:
             json.dump(self.existing_data, file, indent=4)
 
-        with open(self.path_to_file, "r") as file:
-            self.existing_data = json.load(file)
 
     def get_list_with_meta(self, start_year, month_ahead, c_month):
         address = f"{self.base_address}si0046.asp?__cjahr={start_year}&__canz={month_ahead}&__cmonat={c_month}"
