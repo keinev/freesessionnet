@@ -75,7 +75,7 @@ class SessionnetCrawler:
         return json_data
 
     def initialize_json_data(self, meeting_id, list_with_meta):
-        files_in_data = self.build_files_in_data(list_with_meta)
+        files_in_data = self.build_json_filemeta(list_with_meta, "main")
         if len(list_with_meta[1]) == 3:
             got_loc = list_with_meta[1][2]
         else:
@@ -110,29 +110,29 @@ class SessionnetCrawler:
         }
         return json_data
 
-    def build_files_in_data(self, list_with_meta):
+    def build_json_filemeta(self, list_with_meta, doc_type):
         files_in_data = []
-        for down_file in list_with_meta[2]:
-            file_info = self.build_file_info(down_file)
-            files_in_data.append(file_info)
+
+        if doc_type == "main":
+            all_docs = list_with_meta[2]
+        else:
+            all_docs = list_with_meta
+
+        for this_doc in all_docs:
+            this_doc_id = re.search(self.down_number_pattern, this_doc).group(1)
+
+            doc_meta = {
+                "id": this_doc_id,
+                "link": this_doc,
+                "download_time": "",
+                "name": "",
+                "hash": "",
+                "doc_type": doc_type,
+                "version": ""
+            }
+            doc_meta = self.load_edit(doc_meta)
+            files_in_data.append(doc_meta)
         return files_in_data
-
-    def build_file_info(self, down_file):
-        file_info = {}
-        doc_type = "main"
-        main_id = re.search(self.down_number_pattern, down_file).group(1)
-
-        file_info.update({
-            "id": main_id,
-            "link": down_file,
-            "download_time": "",
-            "name": "",
-            "hash": "",
-            "doc_type": doc_type,
-            "version": ""
-        })
-        file_info = self.load_edit(file_info)
-        return file_info
 
     def update_json_with_persons(self, json_data, meeting_id, link):
         for person in self.get_person_data(link):
@@ -305,7 +305,7 @@ class SessionnetCrawler:
 
     def build_sub_item(self, each_sub):
         all_votes = self.build_all_votes(each_sub[3])
-        subfiles_with_meta = self.build_sub_file_meta(each_sub[4])
+        subfiles_with_meta = self.build_json_filemeta(each_sub[4], "sub")
 
         sub_item = {
             "id": each_sub[0],
@@ -316,26 +316,6 @@ class SessionnetCrawler:
             "sub_files": subfiles_with_meta
         }
         return sub_item
-
-    def build_sub_file_meta(self, all_subfiles):
-        subfiles_with_meta = []
-        doc_type = "sub"
-
-        for sub_file in all_subfiles:
-            sub_id = re.search(self.down_number_pattern, sub_file).group(1)
-
-            subfile_meta = {
-                "id": sub_id,
-                "link": sub_file,
-                "download_time": "",
-                "name": "",
-                "hash": "",
-                "doc_type": doc_type,
-                "version": ""
-            }
-            subfile_meta = self.load_edit(subfile_meta)
-            subfiles_with_meta.append(subfile_meta)
-        return subfiles_with_meta
 
     def build_all_votes(self, vote_string):
         all_votes = {}
