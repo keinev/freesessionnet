@@ -12,7 +12,7 @@ def get_all_files_and_meta(folder_path, targets_name, base_address, start_year):
 def check_update_months(folder_path, targets_name, base_address, months_back):
     start_time = datetime.now()
     print(f'Started at {start_time.strftime("%H:%M:%S")}')
-    start_date = datetime.now() - timedelta(days=30 * months_back)
+    start_date = start_time - timedelta(days=30 * months_back)
     start_year = int(start_date.strftime("%Y"))
     start_month = int(start_date.strftime("%m"))
     crawler = SessionnetCrawler(folder_path, targets_name, base_address, start_year, start_month, months_back)
