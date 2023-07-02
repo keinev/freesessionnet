@@ -356,7 +356,6 @@ class SessionnetCrawler:
                         for i, elem in enumerate(session["main_files"]):
                             if elem["id"] == json_data["id"]:
                                 found_element = elem
-
                                 raise self.FoundException
 
                 if json_data["doc_type"] == "sub":
