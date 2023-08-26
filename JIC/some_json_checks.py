@@ -60,6 +60,15 @@ def check_requester(pd_json, req_name):
     return list(set(all_requests))
 
 
+def check_all_places(pd_json):
+    all_places = {}
+    
+    for session_number, session_content in pd_json["sessions"].items():
+        #print(session_content["meeting"]["location"])
+        append(all_places, session_content["meeting"]["location"])
+    return sort_dict(all_places)
+
+
 def sort_dict(person_dict):
     sorted_dict = dict(sorted(person_dict.items(), key=lambda item: item[1], reverse=True))
     return sorted_dict
@@ -80,13 +89,15 @@ def main():
     print(check_votes_persons(pd_json))
     print("-------- Missing Meta:")
     print(check_missing_meta(pd_json))
-    print("-------- Persons:")
+    print("-------- Persons 2023:")
     print(check_persons(pd_json, 2023))
     print("-------- Requester:")
     print(check_all_requester(pd_json))
     print("-------- requests by a requester:")
     for line in (check_requester(pd_json, "FrFr")):
         print("++ " + line)
+    print("-------- places:")
+    print(check_all_places(pd_json))
 
 
 if __name__ == "__main__":
