@@ -20,4 +20,4 @@ https://buergerinfo.stadt-koeln.de/info.asp
 http://buergerinfo.halle.de/infobi.asp
 http://193.158.3.75/mitgliederinfo/info.asp
 
-find new with google.com intext:"si0040.asp" site:*
+find others with google.com intext:"si0040.asp" site:*
