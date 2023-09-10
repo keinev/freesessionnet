@@ -179,6 +179,6 @@ services:
       - es01
     restart: always
     volumes:
-      - green-coding-shared-tmp:/tmp
+      - /tmp
       - .:/tmp/site:ro
 
