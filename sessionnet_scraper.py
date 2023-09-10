@@ -28,7 +28,7 @@ class SessionnetCrawler:
         self.month_ahead = month_ahead
         self.skip_known = skip_known
 
-        self.json_file = f"#{self.city_name.lower()}_base.json"
+        self.json_file = f"{self.city_name.lower()}_base.json"
         self.path_to_file = self.file_path + self.json_file
 
         self.existing_data = []
@@ -94,6 +94,7 @@ class SessionnetCrawler:
         json_data = {
             meeting_id: {
                 "meeting": {
+                    "city": self.city_name,
                     "link": list_with_meta[3],
                     "date": list_with_meta[0],
                     "name": "",

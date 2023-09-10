@@ -1,0 +1,228 @@
+{
+    "sessions": {
+        "8787": {
+            "meeting": {
+                "link": "si0057.asp?__ksinr=8787",
+                "date": "",
+                "name": "ORGro\u00dfk/033/2023",
+                "responsible": "Ortschaftsrat Gro\u00dfk\u00fchnau",
+                "start_time": "17:30",
+                "end_time": "18:00",
+                "location": "Rathaus Gro\u00dfk\u00fchnau, Brambacher Stra\u00dfe 45",
+                "last_crawl": "2023-07-20 15:28:10.139328"
+            },
+            "persons": [
+                {
+                    "name": "Fred Kitzing",
+                    "partie": "Ortschaftsrat Gro\u00dfk\u00fchnau",
+                    "type": "Stimmberechtigtes Mitglied"
+                },
+                {
+                    "name": "J\u00fcrgen K\u00f6nig",
+                    "partie": "Ortschaftsrat Gro\u00dfl\u00fchnau",
+                    "type": "Stimmberechtigtes Mitglied"
+                },
+                {
+                    "name": "Klaus Lattauschke",
+                    "partie": "Ortschaftsrat Gro\u00dfk\u00fchnau",
+                    "type": "Stimmberechtigtes Mitglied"
+                },
+                {
+                    "name": "Dirk Thilo",
+                    "partie": "Ortschaftsrat Gro\u00dfk\u00fchnau (1.Stellv.)",
+                    "type": "Stimmberechtigtes Mitglied"
+                },
+                {
+                    "name": "Yvonne Winkler",
+                    "partie": "Ortschaftsrat Gro\u00dfk\u00fchnau (2.Stellv.)",
+                    "type": "Stimmberechtigtes Mitglied"
+                }
+            ],
+            "main_files": [
+                {
+                    "id": "219335",
+                    "link": "getfile.asp?id=219335&type=do",
+                    "download_time": "2023-07-20 15:28:09.256699",
+                    "name": "219335-1-Oeffentliche_Bekanntmachung.pdf",
+                    "hash": "16b7f5ba63e61d69c2caed2b54772917",
+                    "doc_type": "main",
+                    "version": "1"
+                },
+                {
+                    "id": "222789",
+                    "link": "getfile.asp?id=222789&type=do",
+                    "download_time": "2023-07-20 15:28:10.134159",
+                    "name": "222789-1-Niederschrift_oeffentlicher_Teil.pdf",
+                    "hash": "c2103c5b5d11a03f40a0f6b57e04d1a4",
+                    "doc_type": "main",
+                    "version": "1"
+                }
+            ],
+            "sub_sessions": []
+        },
+        "8801": {
+            "meeting": {
+                "link": "si0057.asp?__ksinr=8801",
+                "date": "",
+                "name": "ORKoch/036/2023",
+                "responsible": "Ortschaftsrat Kochstedt",
+                "start_time": "17:30",
+                "end_time": "18:20",
+                "location": "Rathaus Kochstedt, K\u00f6nigendorfer Stra\u00dfe 76",
+                "last_crawl": "2023-07-20 15:28:13.892774"
+            },
+            "persons": [
+                {
+                    "name": "Britta Grahneis",
+                    "partie": "Ortsb\u00fcrgermeisterin Pro Kochstedt/Stadtr\u00e4tin Freie Fraktion",
+                    "type": "Stimmberechtigtes Mitglied"
+                },
+                {
+                    "name": "J\u00f6rg Bernstein",
+                    "partie": "Ortschaftsrat, Stadtrat FDP, Bauausschuss, Wirtschaftsausschuss",
+                    "type": "Stimmberechtigtes Mitglied"
+                },
+                {
+                    "name": "Uwe Gelfert",
+                    "partie": "Ortschaftsrat, CDU",
+                    "type": "Stimmberechtigtes Mitglied"
+                },
+                {
+                    "name": "Hans-Joachim P\u00e4tzold",
+                    "partie": "Ortschaftsrat, Stadtrat Die Linke, Wirtschaftsausschuss, EB Stadtpflege",
+                    "type": "Stimmberechtigtes Mitglied"
+                },
+                {
+                    "name": "Mario Pinkert",
+                    "partie": "Stellv. Ortsb\u00fcrgermeister, SPD",
+                    "type": "Stimmberechtigtes Mitglied"
+                },
+                {
+                    "name": "Andreas Szczes",
+                    "partie": "Ortschaftsrat, Pro Kochstedt",
+                    "type": "Stimmberechtigtes Mitglied"
+                },
+                {
+                    "name": "Timm Szelejewski",
+                    "partie": "Ortscharftsrat, Die Linke",
+                    "type": "Stimmberechtigtes Mitglied"
+                }
+            ],
+            "main_files": [
+                {
+                    "id": "219253",
+                    "link": "getfile.asp?id=219253&type=do",
+                    "download_time": "2023-07-20 15:28:12.958259",
+                    "name": "219253-1-Oeffentliche_Bekanntmachung.pdf",
+                    "hash": "7e6d10b02596006ff458b86d5da98658",
+                    "doc_type": "main",
+                    "version": "1"
+                },
+                {
+                    "id": "220235",
+                    "link": "getfile.asp?id=220235&type=do",
+                    "download_time": "2023-07-20 15:28:13.886649",
+                    "name": "220235-1-Niederschrift_oeffentlicher_Teil.pdf",
+                    "hash": "ad11c5148e706a15fabaaed5c560a36f",
+                    "doc_type": "main",
+                    "version": "1"
+                }
+            ],
+            "sub_sessions": [
+                {
+                    "id": "FV/007/2023/StR",
+                    "desc": "Reaktivierung der Teiche an der Kochstedter Waldsiedlung durch die Einleitung von Niederschlagswasser",
+                    "voted_status": "unge\u00e4ndert beschlossen",
+                    "votes": {
+                        "yes": "4",
+                        "no": "0",
+                        "nonvote": "1",
+                        "biased": "0"
+                    },
+                    "requester": "StR",
+                    "sub_files": [
+                        {
+                            "id": "220056",
+                            "link": "getfile.asp?id=220056&type=do",
+                            "download_time": "2023-07-20 15:28:17.032725",
+                            "name": "220056-1-BV_mit_Abstimmungsergebnissen_Fraktionen.pdf",
+                            "hash": "94f55dfb3c45110fefd3ffd1817e5b2b",
+                            "doc_type": "sub",
+                            "version": "1"
+                        },
+                        {
+                            "id": "219250",
+                            "link": "getfile.asp?id=219250&type=do",
+                            "download_time": "2023-07-20 15:28:17.874656",
+                            "name": "219250-1-Beschlussvorlage_Fraktion_FV_007_2023_StR.pdf",
+                            "hash": "9266d7ce695ced6cc461c1fa310a020e",
+                            "doc_type": "sub",
+                            "version": "1"
+                        }
+                    ]
+                }
+            ]
+        },
+        "8843": {
+            "meeting": {
+                "link": "si0057.asp?__ksinr=8843",
+                "date": "",
+                "name": "SBBSHT/036/2023",
+                "responsible": "Stadtbezirksbeirat S\u00fcd, Haideburg,T\u00f6rten",
+                "start_time": "17:00",
+                "end_time": "18:25",
+                "location": "Dessauer Verkehrs GmbH, Erich-K\u00f6ckert-Str. 48, 06842 Dessau-Ro\u00dflau",
+                "last_crawl": "2023-07-20 15:28:18.682725"
+            },
+            "persons": [
+                {
+                    "name": "Rita Bahn-Kunze",
+                    "partie": "Stadtbezirksbeirat S\u00fcd, Haideburg, T\u00f6rten",
+                    "type": "Vorsitzende"
+                },
+                {
+                    "name": "Thomas Passek",
+                    "partie": "Stadtbezirksbeirat S\u00fcd, Haideburg, T\u00f6rten",
+                    "type": "Stimmberechtigtes Mitglied"
+                },
+                {
+                    "name": "Florian Kaduk",
+                    "partie": "",
+                    "type": "Stimmberechtigtes Mitglied"
+                },
+                {
+                    "name": "Christoph Wolters",
+                    "partie": "Stadtbezirk S\u00fcd, Haidebur, T\u00f6rten",
+                    "type": "Stimmberechtigtes Mitglied"
+                },
+                {
+                    "name": "Otto-Harald Kr\u00fcger",
+                    "partie": "Stadtbezirksbeirat S\u00fcd, Haideburg, T\u00f6rten",
+                    "type": "Stellv. Vorsitzender"
+                },
+                {
+                    "name": "Daniel-Andr\u00e9 Br\u00e4secke",
+                    "partie": "Stadtbezirksbeirat S\u00fcd, Haideburg, T\u00f6rten",
+                    "type": "Stimmberechtigtes Mitglied"
+                },
+                {
+                    "name": "Christine Bebber",
+                    "partie": "StadtbezirsksbeiratS\u00fcd/Haideburg/T\u00f6rten / Pro Dessau-Ro\u00dflau",
+                    "type": "Stimmberechtigtes Mitglied"
+                }
+            ],
+            "main_files": [
+                {
+                    "id": "219302",
+                    "link": "getfile.asp?id=219302&type=do",
+                    "download_time": "2023-07-20 15:28:18.680477",
+                    "name": "219302-1-Oeffentliche_Bekanntmachung.pdf",
+                    "hash": "b0efaac8909ef4144ab247062390e5b1",
+                    "doc_type": "main",
+                    "version": "1"
+                }
+            ],
+            "sub_sessions": []
+        }
+    }
+}

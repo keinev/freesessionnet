@@ -40,7 +40,7 @@ def main():
 
     while True:
         try:
-            wait_until_next_execution(scrape_hour)
+            #wait_until_next_execution(scrape_hour)
             check_update_months(folder_path, targets_name, base_address, look_back_in_month)
             print("Done. Going to sleep.")
         except Exception as e:
