@@ -1,0 +1,8 @@
+aiofiles
+beautifulsoup4
+elasticsearch
+fastapi
+python-dotenv
+requests
+tika
+uvicorn
