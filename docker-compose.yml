@@ -171,11 +171,17 @@ services:
       - LOGSTASH_HOSTS=http://logstash01:9600
 
   website:
+    depends_on:
+      - es01
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
     container_name: website
     restart: always
+    volumes:
+      - certs:/usr/share/elasticsearch/config/certs
 

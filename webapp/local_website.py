@@ -1,14 +1,17 @@
 from flask import Flask, request, render_template
 from elasticsearch import Elasticsearch
+from dotenv import load_dotenv
 import re
+import os
+
+load_dotenv()
 
 base_website = "https://sessionnet.dessau.de/bi/"
 
 es = Elasticsearch(
-    'https://localhost:9200',
-    verify_certs=False,
-    #ca_certs="./ca.crt",
-    basic_auth=("elastic", "changeme")
+    'https://es01:9200',
+    ca_certs="/usr/share/elasticsearch/config/certs/ca/ca.crt",
+    basic_auth=("elastic", os.getenv('ELASTIC_PASSWORD'))
 )
 
 app = Flask(__name__)
@@ -19,7 +22,7 @@ title = "free4Session"
 
 @app.route("/")
 def home():
-    return render_template("index.html")#, items=items)
+    return render_template("index.html")
 
 @app.route("/", methods =['POST'])
 def get_search():
@@ -42,7 +45,7 @@ def get_search():
                         "sub_sessions.sub_files.parsed_data.content": {}
                 }}}
         try:
-            response = es.search(index="test_local", body=body)
+            response = es.search(index="sessionnet_dessau", body=body)
             if response['hits']['total']['value'] >= 1:
                 count_found = str(response['hits']['total']['value']) + " Ergebnisse in " + str(response['took']) + " ms"
                 for hit in response['hits']['hits']:
