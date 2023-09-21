@@ -58,11 +58,12 @@ def get_search():
                     n_content = ""
                     try:
                         for content in preview["sub_sessions.sub_files.parsed_data.content"]:
-                            n_content += str(content)
+                            n_content += str(content) + " ... "
                     except:
                         for content in preview["main_files.parsed_data.content"]:
-                            n_content += str(content) + " ||| "
+                            n_content += str(content) + " ... "
                     n_content = n_content.replace("\n", "")
+                    n_content = n_content.replace("-", "")
                     n_content = n_content.replace("<em", ">")
                     n_content = n_content.replace("/em>", "<")
                     item["desc"] = n_content

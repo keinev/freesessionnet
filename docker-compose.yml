@@ -7,8 +7,6 @@ volumes:
     driver: local
   kibanadata:
     driver: local
-  metricbeatdata01:
-    driver: local
 
 networks:
   default:
@@ -147,29 +145,6 @@ services:
       timeout: 10s
       retries: 120
 
-  metricbeat01:
-    depends_on:
-      es01:
-        condition: service_healthy
-      kibana:
-        condition: service_healthy
-    image: docker.elastic.co/beats/metricbeat:${STACK_VERSION}
-    user: root
-    volumes:
-      - certs:/usr/share/metricbeat/certs
-      - metricbeatdata01:/usr/share/metricbeat/data
-      - "./metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "/sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro"
-      - "/proc:/hostfs/proc:ro"
-      - "/:/hostfs:ro"
-    environment:
-      - ELASTIC_USER=elastic
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-      - ELASTIC_HOSTS=https://es01:9200
-      - KIBANA_HOSTS=http://kibana:5601
-      - LOGSTASH_HOSTS=http://logstash01:9600
-
   website:
     depends_on:
       - es01
@@ -185,3 +160,14 @@ services:
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
 
+  nginx:
+    image: nginx:latest
+    container_name: nginx_proxy
+    ports: 
+      - "33033:33033"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - website
+    restart: always
+    
