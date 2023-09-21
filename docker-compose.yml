@@ -174,11 +174,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
     container_name: website
-    depends_on:
-      - es01
     restart: always
-    volumes:
-      - /tmp
-      - .:/tmp/site:ro
 

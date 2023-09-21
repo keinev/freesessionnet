@@ -5,5 +5,5 @@ fastapi
 python-dotenv
 requests
 tika
-uvicorn
+gunicorn
 flask
