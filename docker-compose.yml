@@ -147,7 +147,8 @@ services:
 
   website:
     depends_on:
-      - es01
+      es01:
+        condition: service_healthy
     build:
       context: .
       dockerfile: Dockerfile
