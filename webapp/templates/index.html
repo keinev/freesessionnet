@@ -8,10 +8,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
   <!-- Site Properties -->
-  <title>freeSessionNet</title>
+  <title>[i]nfo [m]e [now]</title>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.2/dist/semantic.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.2/dist/semantic.min.js"></script>
+  <link rel="stylesheet" href="/static/css/semantic.min.css">
+  <script src="/static/js/semantic.min.js"></script>
 
   <style type="text/css">
   body {
@@ -39,6 +39,12 @@
     padding: 2em 0em;
   }
 
+  .super-massive{
+    margin-top: 0.25em;
+    font-size: 4em;
+    color: lightgray;
+  }
+
   </style>
 
 </head>
@@ -46,9 +52,12 @@
 
   <div class="ui inverted menu">
     <div class="ui container">
-      <a href="#" class="header item">
-        <h1>freeSessionNet</h1>
-      </a>
+      <div class="header item teal">
+        <h1>i<span class="ui teal text">[nfo]</span>m<span class="ui teal text">[e]</span>now</h1>
+      </div>
+      <div class="ui container">
+        <div class="ui super-massive">Dessau</div>
+      </div>
     </div>
   </div>
 
@@ -79,18 +88,37 @@
         </div>
       {% endfor %}
     </div>
+
+    <!---
+    <div class="ui pagination menu">
+      <a class="item active">1</a>
+      <div class="disabled item">...</div>
+      <a class="item">10</a>
+      <a class="item">11</a>
+      <a class="item">12</a>
+    </div>
+    -->
+
   </div>
 
+  
 
 
   <div class="ui inverted vertical footer segment">
     <div class="ui center aligned container">
-      <img class="ui centered image logo" src="{{url_for('static', filename='fsn.jpeg')}}">
+      <img class="ui centered image logo" src="/static/fsn.jpeg">
       <div class="ui horizontal inverted small divided link list">
-        <a class="item" href="#">Site Map</a>
-        <a class="item" href="#">Contact Us</a>
-        <a class="item" href="#">Terms and Conditions</a>
+        <a class="item" href="https://github.com/keinev/freesessionnet" target="_blank">GitHub</a>
+        <a class="item" href="https://www.meetup.com/de-DE/tech-stammtisch-dessau-rosslau/" target="_blank">Meetup</a>
         <a class="item" href="#">Privacy Policy</a>
+      </div>
+    </div>
+    <div class="ui center aligned container">a Project of Tech Stammtisch Dessau-Rosslau</div>
+    <div class="ui center aligned container">
+      <div class="ui center aligned statistic small teal">
+        <div class="value">
+          {{ num_queries }}
+        </div>
       </div>
     </div>
   </div>

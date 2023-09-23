@@ -3,6 +3,7 @@ from elasticsearch import Elasticsearch
 from dotenv import load_dotenv
 import re
 import os
+from datetime import datetime
 
 load_dotenv()
 
@@ -14,15 +15,19 @@ es = Elasticsearch(
     basic_auth=("elastic", os.getenv('ELASTIC_PASSWORD'))
 )
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path="/static")
 
 items = []
 count_found = ""
 title = "free4Session"
 
+def get_queries():
+    count = es.count(index="search-queries")['count']
+    return count
+
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return render_template("index.html", num_queries = str(get_queries()))
 
 @app.route("/", methods =['POST'])
 def get_search():
@@ -30,6 +35,11 @@ def get_search():
     count_found = ""
     query = request.form.get('in_search')
 
+    doc = {
+            'query': query,
+            'timestamp': datetime.utcnow()
+        }
+    es.index(index="search-queries", body=doc)
 
     if re.match(r'^[\w\s]+$', query):
         body = {
@@ -84,7 +94,7 @@ def get_search():
         item["date"] = "querry must meet pattern a-zA-Z0-9_ "
         items.append(item)
 
-    return render_template("index.html", items = items, count_found=count_found)
+    return render_template("index.html", items = items, count_found=count_found, num_queries=str(get_queries()))
 
 
 if __name__ == "__main__":

@@ -13,4 +13,4 @@ RUN rm -rf /var/lib/apt/lists/*
 
 # gunicorn for website
 COPY ./webapp /app
-CMD ["gunicorn", "-w", "9", "-b", "0.0.0.0:8000", "local_website:app", "--chdir", "/app"]
+CMD ["gunicorn", "-w", "9", "-b", "0.0.0.0:8000", "website:app", "--chdir", "/app"]
