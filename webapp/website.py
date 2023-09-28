@@ -106,7 +106,7 @@ def get_search():
         item["date"] = "querry must meet pattern a-zA-Z0-9_ "
         items.append(item)
 
-    return render_template("index.html", items = items, count_found=count_found, num_queries = str(get_queries()))
+    return render_template("index.html", items = items, query=query, count_found=count_found, num_queries = str(get_queries()))
 
 
 if __name__ == "__main__":

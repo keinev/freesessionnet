@@ -81,7 +81,7 @@
 
 
   <div class="ui main text container">
-    <h2 class="ui header">Suchergebnisse</h2>
+    <h2 class="ui header">Suchergebnisse {% if query %}für: {{query}} {% endif %}</h2>
     <div class="description">{{ count_found }}</div>
     <div class="ui relaxed divided list">
       {% for item in items %}
