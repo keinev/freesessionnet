@@ -22,7 +22,10 @@ count_found = ""
 title = "free4Session"
 
 def get_queries():
-    count = es.count(index="search-queries")['count']
+    try:
+        count = es.count(index="search-queries")['count']
+    except:
+        count = 1
     return count
 
 @app.route("/")
@@ -43,17 +46,26 @@ def get_search():
 
     if re.match(r'^[\w\s]+$', query):
         body = {
+            "sort" : [
+                { "main_files.parsed_data.metadata.xmp:CreateDate": {"order" : "desc", "format": "strict_date_optional_time_nanos"}},
+                { "sub_sessions.sub_files.parsed_data.metadata.xmp:CreateDate": {"order" : "desc", "format": "strict_date_optional_time_nanos"}},
+                "_score"
+            ],
+            
             "query": {
                 "multi_match" : {
                     "query":      query,
                     "type":       "best_fields",
-                    "fields":     [ "*" ]
+                    "fields":     ["main_files.parsed_data.content", "main_files.name", "sub_sessions.sub_files.parsed_data.content", "sub_sessions.sub_files.name"]
                 }},
+
                 "highlight": {
                     "fields": {
                         "main_files.parsed_data.content": {},
-                        "sub_sessions.sub_files.parsed_data.content": {}
-                }}}
+                        "main_files.name": {}, 
+                        "sub_sessions.sub_files.parsed_data.content": {},
+                        "sub_sessions.sub_files.name": {}
+            }}}
         try:
             response = es.search(index="sessionnet_dessau", body=body)
             if response['hits']['total']['value'] >= 1:
@@ -94,7 +106,7 @@ def get_search():
         item["date"] = "querry must meet pattern a-zA-Z0-9_ "
         items.append(item)
 
-    return render_template("index.html", items = items, count_found=count_found, num_queries=str(get_queries()))
+    return render_template("index.html", items = items, count_found=count_found, num_queries = str(get_queries()))
 
 
 if __name__ == "__main__":

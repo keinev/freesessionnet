@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN rm -rf /var/lib/apt/lists/*
 RUN apt update && \
-    apt install python3 python3-pip gunicorn default-jre -y
+    apt install python3 python3-pip gunicorn default-jre curl -y
 
 COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
