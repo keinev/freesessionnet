@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <!-- Standard Meta -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="description" content="info me now – Dein Open-Source-Tool zur einfachen Durchsuchung des Bürgerinfoportals von Dessau-Roßlau. Entdecke öffentliche Informationen schneller und effizienter. Ein Projekt des Techstammtisch Dessau-Rosslau.">
+
+  <!-- Site Properties -->
+  <title>i[nfo] m[e] now</title>
+ <!-- Favicon related -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/static/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/static/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
+  <link rel="stylesheet" href="/static/css/semantic.min.css">
+  <script src="/static/js/semantic.min.js"></script>
+
+  <style type="text/css">
+  body {
+    background-color: #FFFFFF;
+  }
+  .ui.menu .item img.logo {
+    margin-right: 1.5em;
+  }
+  img.logo{
+    height: 25em;
+    width: auto;
+  }
+
+  .main.container {
+    margin-top: 8em;
+  }
+  .wireframe {
+    margin-top: 2em;
+  }
+  .ui.footer.segment {
+    margin: 5em 0em 0em;
+    padding: 5em 0em;
+  }
+  .ui.inverted.menu {
+    padding: 2em 0em;
+  }
+
+  .super-massive{
+    margin-top: 0.25em;
+    font-size: 4em;
+    color: lightgray;
+  }
+
+  </style>
+
+</head>
+<body>
+
+  <div class="ui inverted menu">
+    <div class="ui container">
+      <div class="header item teal">
+        <h1>i<span class="ui teal text">[nfo]</span>m<span class="ui teal text">[e]</span>now</h1>
+      </div>
+      <div class="ui container">
+        <div class="ui super-massive">Dessau</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui main text container">
+    <h1 class="ui header">Durchsuche die Daten deiner Stadt</h1>
+    <form class="ui action left icon input" method="POST">
+      <i class="search icon"></i>
+      <input name="in_search" type="text" placeholder="Suchen...">
+      <button class="ui teal button" type="submit">Suchen</button>
+    </form>
+  </div>
+
+
+  <div class="ui main text container">
+    <h2 class="ui header">Suchergebnisse</h2>
+    <div class="description">{{ count_found }}</div>
+    <div class="ui relaxed divided list">
+      {% for item in items %}
+        <div class="item">
+          <i class="large angle right middle aligned icon"></i>
+          <div class="content">
+            <a href = {{ item['link'] }} target="_blank" >{{ item['link'] }}</a>
+            <div class="description"><h3>{{ item['resp'] }}</h3></div>
+            <div class="description">{{ item['desc'] }}</div>
+            <div class="description"><h4>{{ item['date'] }}</h4></div>
+            <div class="description">{{ item['accuracy'] }}</div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!---
+    <div class="ui pagination menu">
+      <a class="item active">1</a>
+      <div class="disabled item">...</div>
+      <a class="item">10</a>
+      <a class="item">11</a>
+      <a class="item">12</a>
+    </div>
+    -->
+
+  </div>
+
+  
+
+
+  <div class="ui inverted vertical footer segment">
+    <div class="ui center aligned container">
+      <img class="ui centered image logo" src="/static/fsn.jpeg" alt="Unser Logo im Footer, ">
+      <div class="ui horizontal inverted small divided link list">
+        <a class="item" href="https://github.com/keinev/freesessionnet" target="_blank">GitHub</a>
+        <a class="item" href="https://www.meetup.com/de-DE/tech-stammtisch-dessau-rosslau/" target="_blank">Meetup</a>
+        <a class="item" href="#">Privacy Policy</a>
+      </div>
+    </div>
+    <div class="ui center aligned container">a Project of Tech Stammtisch Dessau-Rosslau</div>
+    <div class="ui center aligned container">
+      <div class="ui center aligned statistic small teal">
+        <div class="value">
+          {{ num_queries }}
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

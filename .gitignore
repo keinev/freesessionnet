@@ -1,0 +1,13 @@
+venv
+# dont upload the files at this point of development
+** RIS2_PDF/
+
+# ignore all stuff generatet by certbot to don't leak your ssl stuff
+** certbot/conf/accouts/
+** certbot/conf/archive/
+** certbot/conf/live/
+** certbot/conf/renewal/
+** certbot/conf/renewal-hooks/
+
+# ignore JIC folder
+** JIC/

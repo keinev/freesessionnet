@@ -1,0 +1,9 @@
+PUT sessionnet_dessau/_settings
+{
+  "index.mapping.total_fields.limit": 4000
+}
+
+PUT sessionnet_dessau/_settings
+{
+  "index.highlight.max_analyzed_offset": 5000000
+}
