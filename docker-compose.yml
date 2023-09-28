@@ -171,7 +171,8 @@ services:
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt:rw
       - ./data/certbot/www:/var/www/certbot:rw
-      - ./data/certbot/scripts:/scripts:ro
+      - ./data/certbot/scripts/certbot-auto.sh:/scripts/certbot-auto.sh
+      - .env:/scripts/.env
     restart: always
 
   nginx:
